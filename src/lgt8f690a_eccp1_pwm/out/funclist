@@ -1,0 +1,5 @@
+_hisr: CODE, 106 0 26
+_main: CODE, 13 0 48
+_misc_eer: CODE, 132 0 23
+_eccp1_pwm_init: CODE, 61 0 45
+Total: 142
