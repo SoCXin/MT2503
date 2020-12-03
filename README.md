@@ -1,10 +1,10 @@
-﻿# [LGT8F690A](https://github.com/SoCXin/LGT8F690A) 
+﻿# [LGT8F690A](https://github.com/SoCXin/LGT8F690A)
 
-[![sites](http://182.61.61.133/link/resources/SoC.png)](http://SoC.Xin)  
+[![sites](http://182.61.61.133/link/resources/SoC.png)](http://SoC.Xin)
 
 #### [Vendor](https://github.com/SoCXin/Vendor)：[LogicGreen](http://www.lgtic.com/)
 #### [Core](https://github.com/SoCXin/AVR)：[AVR](https://github.com/SoCXin/AVR)
-#### [Level](https://github.com/SoCXin/Level)：32MHz 
+#### [Level](https://github.com/SoCXin/Level)：32MHz
 
 ## [LGT8F690A简介](https://github.com/SoCXin/LGT8F690A/wiki)
 
@@ -21,4 +21,4 @@
 
 [LGT8F690A](https://github.com/SoCXin/LGT8F690A)
 
-###  [SoC芯平台](http://SoC.Xin) 
+###  [SoC芯平台](http://www.SoC.Xin)
