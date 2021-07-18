@@ -7,9 +7,9 @@
 
 ## [简介](https://github.com/SoCXin/MT2503/wiki)
 
-[MT2503](https://github.com/SoCXin/MT2503)
+[MT2503](https://github.com/SoCXin/MT2503) 平台是GSM平台MT6261和GNSS平台MT3333的组合体。其在面积缩小40%、功能大大增加的同时，性能也有很大程度的提高。
 
-[![sites](docs/MT2503.png)](https://www.mediatek.cn/products/nbIot/MT2503)
+[![sites](docs/MT2503.png)](https://www.mediatek.com/products/m2m/mt2503)
 
 ### 关键特性
 
@@ -25,7 +25,11 @@
 
 ### [选型建议](https://github.com/SoCXin)
 
-[MT2503](https://github.com/SoCXin/MT2503) 支持openCPU开发
+[MT2503](https://github.com/SoCXin/MT2503) 支持openCPU开发，可以获得相关SDK资源
 
 * TFBGA 5.4 x 6.2 mm
+
+#### 相关开发板
+
+[![sites](docs/B.jpg)](https://item.taobao.com/item.htm?spm=a1z09.2.0.0.418e2e8d5ZYa2N&id=578257905023&_u=igas3eu328b)
 ### [探索芯世界 www.SoC.xin](http://www.SoC.Xin)

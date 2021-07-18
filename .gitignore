@@ -51,7 +51,7 @@ HACKING*
 *.uvgu*
 .gitmodules
 # *.png
-*.jpg
+# *.jpg
 *.rst
 .travis.yml
 doc
