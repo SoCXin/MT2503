@@ -1,0 +1,530 @@
+##==========================================================================
+ #                   Quectel OpenCPU
+ #
+ #              Copyright(c) 2012-2013 Quectel Ltd. All rights reserved.
+ #
+ #--------------------------------------------------------------------------
+ # File Description
+ # ----------------
+ #      OpenCPU makefile for GCC.
+ #
+ #--------------------------------------------------------------------------
+ #==========================================================================
+
+#-------------------------------------------------------------------------------
+# Configure GCC installation path, and GCC version.
+# To execute "arm-none-eabi-gcc -v" in command line can get the current gcc version 
+#-------------------------------------------------------------------------------
+GCC_INSTALL_PATH=D:\yyw-work\203CS\ARMPath
+GCC_VERSION=4.6.1
+
+
+#-------------------------------------------------------------------------------
+#use the following path for 32-bit operating system
+#-------------------------------------------------------------------------------
+#GCC_INSTALL_PATH=C:\Program Files\CodeSourcery\Sourcery_CodeBench_Lite_for_ARM_EABI 
+
+C_PREDEF=-D __ZFY_TRACKER_MQTT_APP__
+#-------------------------------------------------------------------------------
+# Configure the Cloud Solution
+#-------------------------------------------------------------------------------
+CLOUD_SOLUTION=ZYF_TRACKER_MQTT_SOLUTION
+#ZYF_SOLUTION
+#ZYF_MQTT_SOLUTION
+#ZYF_TEST_SOLUTION
+#PAHO_MQTT_SOLUTION
+#MY_ZYF_SOLUTION
+#ZYF_TRACKER_MQTT_SOLUTION
+#ALIOT_MQTT_NOSYN_SOLUTION
+#ALIOT_MQTT_SYN_SOLUTION
+#ZYF_MQTT_PEDOMETER_SOLUTION
+
+#-------------------------------------------------------------------------------
+# Configure version and out target
+#-------------------------------------------------------------------------------
+PLATFORM = APPGS3MD
+MEMORY   = M32
+VERSION  = A01
+TARGET   = $(strip $(PLATFORM))$(strip $(MEMORY))$(strip $(VERSION))
+
+#-------------------------------------------------------------------------------
+# Configure the include directories
+#-------------------------------------------------------------------------------
+INCS =  -I $(ENV_INC) 
+INCS += -I ./           \
+        -I include      \
+        -I ril/inc      \
+        -I custom/config   \
+        -I custom/fota/inc \
+
+		
+
+
+
+#-------------------------------------------------------------------------------
+# Configure source code dirctories
+#-------------------------------------------------------------------------------
+SRC_DIRS=example    \
+		 custom     \
+		 custom\config     \
+         custom\fota\src   \
+		 ril\src    \
+
+
+
+#-------------------------------------------------------------------------------
+# Configure source code files to compile in the source code directories
+#-------------------------------------------------------------------------------
+SRC_SYS=$(wildcard custom/config/*.c)
+SRC_SYS_RIL=$(wildcard ril/src/*.c)
+SRC_EXAMPLE=$(wildcard example/*.c)
+SRC_CUS=$(wildcard custom/*.c)
+SRC_FOTA=$(wildcard custom/fota/src/*.c)
+
+
+OBJS=\
+	 $(patsubst %.c, $(OBJ_DIR)/%.o, $(SRC_SYS))        \
+	 $(patsubst %.c, $(OBJ_DIR)/%.o, $(SRC_SYS_RIL))    \
+	 $(patsubst %.c, $(OBJ_DIR)/%.o, $(SRC_EXAMPLE))    \
+	 $(patsubst %.c, $(OBJ_DIR)/%.o, $(SRC_CUS))        \
+	 $(patsubst %.c, $(OBJ_DIR)/%.o, $(SRC_FOTA))      \
+
+ifeq ($(strip $(CLOUD_SOLUTION)),ZYF_SOLUTION)
+     INCS +=-I cloud/zyf_app/zyf_config
+	 INCS +=-I cloud/zyf_app/zyf_custom
+	 INCS +=-I cloud/zyf_app/zyf_protocol
+	 SRC_DIRS +=cloud\zyf_app\zyf_config
+	 SRC_DIRS +=cloud\zyf_app\zyf_custom
+	 SRC_DIRS +=cloud\zyf_app\zyf_protocol
+	 SRC_CLOUD =$(wildcard cloud/zyf_app/zyf_config/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_app/zyf_custom/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_app/zyf_protocol/*.c)
+	 OBJS +=$(patsubst %.c, $(OBJ_DIR)/%.o, $(SRC_CLOUD))
+	 C_PREDEF +=-D __$(CLOUD_SOLUTION)__
+
+else ifeq ($(strip $(CLOUD_SOLUTION)),ZYF_TEST_SOLUTION)
+	INCS +=-I cloud/zfy_test_app
+	SRC_DIRS +=cloud\zfy_test_app
+	SRC_CLOUD =$(wildcard cloud/zfy_test_app/*.c)
+	OBJS +=$(patsubst %.c, $(OBJ_DIR)/%.o, $(SRC_CLOUD))
+	C_PREDEF +=-D __$(CLOUD_SOLUTION)__
+
+else ifeq ($(strip $(CLOUD_SOLUTION)),ALIOT_MQTT_NOSYN_SOLUTION)
+
+	 INCS +=-I cloud/aliot_sdk_3.0.1_noasy/zyf_mqtt/dev_sign
+	 INCS +=-I cloud/aliot_sdk_3.0.1_noasy/zyf_mqtt/infra
+	 INCS +=-I cloud/aliot_sdk_3.0.1_noasy/zyf_mqtt/mqtt
+	 INCS +=-I cloud/aliot_sdk_3.0.1_noasy/zyf_mqtt/wrappers
+	 INCS +=-I cloud/aliot_sdk_3.0.1_noasy/zyf_mqtt
+	 INCS +=-I cloud/aliot_sdk_3.0.1_noasy/zyf_ble
+	 INCS +=-I cloud/aliot_sdk_3.0.1_noasy/zyf_config
+	 INCS +=-I cloud/aliot_sdk_3.0.1_noasy/zyf_custom
+	 INCS +=-I cloud/aliot_sdk_3.0.1_noasy/zyf_protocol
+	 
+	 SRC_DIRS +=cloud\aliot_sdk_3.0.1_noasy\zyf_mqtt\dev_sign
+	 SRC_DIRS +=cloud\aliot_sdk_3.0.1_noasy\zyf_mqtt\infra
+	 SRC_DIRS +=cloud\aliot_sdk_3.0.1_noasy\zyf_mqtt\mqtt
+	 SRC_DIRS +=cloud\aliot_sdk_3.0.1_noasy\zyf_mqtt\wrappers
+	 SRC_DIRS +=cloud\aliot_sdk_3.0.1_noasy\zyf_mqtt
+	 SRC_DIRS +=cloud\aliot_sdk_3.0.1_noasy\zyf_ble
+	 SRC_DIRS +=cloud\aliot_sdk_3.0.1_noasy\zyf_config
+	 SRC_DIRS +=cloud\aliot_sdk_3.0.1_noasy\zyf_custom
+	 SRC_DIRS +=cloud\aliot_sdk_3.0.1_noasy\zyf_protocol
+	 
+	 
+	 SRC_CLOUD =$(wildcard cloud/aliot_sdk_3.0.1_noasy/zyf_mqtt/dev_sign/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/aliot_sdk_3.0.1_noasy/zyf_mqtt/mqtt/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/aliot_sdk_3.0.1_noasy/zyf_mqtt/infra/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/aliot_sdk_3.0.1_noasy/zyf_mqtt/wrappers/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/aliot_sdk_3.0.1_noasy/zyf_mqtt/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/aliot_sdk_3.0.1_noasy/zyf_ble/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/aliot_sdk_3.0.1_noasy/zyf_config/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/aliot_sdk_3.0.1_noasy/zyf_custom/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/aliot_sdk_3.0.1_noasy/zyf_protocol/*.c)
+	
+	 OBJS +=$(patsubst %.c, $(OBJ_DIR)/%.o, $(SRC_CLOUD))
+	 C_PREDEF +=-D __$(CLOUD_SOLUTION)__
+
+else ifeq ($(strip $(CLOUD_SOLUTION)),ALIOT_MQTT_SYN_SOLUTION)
+
+	 INCS +=-I cloud/aliot_sdk_3.0.1_asy/zyf_mqtt/dev_sign
+	 INCS +=-I cloud/aliot_sdk_3.0.1_asy/zyf_mqtt/infra
+	 INCS +=-I cloud/aliot_sdk_3.0.1_asy/zyf_mqtt/mqtt
+	 INCS +=-I cloud/aliot_sdk_3.0.1_asy/zyf_mqtt/wrappers
+	 INCS +=-I cloud/aliot_sdk_3.0.1_asy/zyf_mqtt
+	 INCS +=-I cloud/aliot_sdk_3.0.1_asy/zyf_ble
+	 INCS +=-I cloud/aliot_sdk_3.0.1_asy/zyf_config
+	 INCS +=-I cloud/aliot_sdk_3.0.1_asy/zyf_custom
+	 INCS +=-I cloud/aliot_sdk_3.0.1_asy/zyf_protocol
+	 
+	 SRC_DIRS +=cloud\aliot_sdk_3.0.1_asy\zyf_mqtt\dev_sign
+	 SRC_DIRS +=cloud\aliot_sdk_3.0.1_asy\zyf_mqtt\infra
+	 SRC_DIRS +=cloud\aliot_sdk_3.0.1_asy\zyf_mqtt\mqtt
+	 SRC_DIRS +=cloud\aliot_sdk_3.0.1_asy\zyf_mqtt\wrappers
+	 SRC_DIRS +=cloud\aliot_sdk_3.0.1_asy\zyf_mqtt
+	 SRC_DIRS +=cloud\aliot_sdk_3.0.1_asy\zyf_ble
+	 SRC_DIRS +=cloud\aliot_sdk_3.0.1_asy\zyf_config
+	 SRC_DIRS +=cloud\aliot_sdk_3.0.1_asy\zyf_custom
+	 SRC_DIRS +=cloud\aliot_sdk_3.0.1_asy\zyf_protocol
+	 
+	 
+	 SRC_CLOUD =$(wildcard cloud/aliot_sdk_3.0.1_asy/zyf_mqtt/dev_sign/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/aliot_sdk_3.0.1_asy/zyf_mqtt/mqtt/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/aliot_sdk_3.0.1_asy/zyf_mqtt/infra/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/aliot_sdk_3.0.1_asy/zyf_mqtt/wrappers/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/aliot_sdk_3.0.1_asy/zyf_mqtt/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/aliot_sdk_3.0.1_asy/zyf_ble/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/aliot_sdk_3.0.1_asy/zyf_config/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/aliot_sdk_3.0.1_asy/zyf_custom/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/aliot_sdk_3.0.1_asy/zyf_protocol/*.c)
+	
+	 OBJS +=$(patsubst %.c, $(OBJ_DIR)/%.o, $(SRC_CLOUD))
+	 C_PREDEF +=-D __$(CLOUD_SOLUTION)__
+	 
+else ifeq ($(strip $(CLOUD_SOLUTION)),ZYF_MQTT_SOLUTION)
+
+	 INCS +=-I cloud/zyf_mqtt_ble_app/zyf_mqtt/auth
+	 INCS +=-I cloud/zyf_mqtt_ble_app/zyf_mqtt/mqtt
+	 INCS +=-I cloud/zyf_mqtt_ble_app/zyf_mqtt/mqtt/MQTTPacket
+	 INCS +=-I cloud/zyf_mqtt_ble_app/zyf_mqtt/system
+	 INCS +=-I cloud/zyf_mqtt_ble_app/zyf_mqtt/utility
+	 INCS +=-I cloud/zyf_mqtt_ble_app/zyf_mqtt/platform
+	 INCS +=-I cloud/zyf_mqtt_ble_app/zyf_mqtt/platform/network
+	 INCS +=-I cloud/zyf_mqtt_ble_app/zyf_mqtt/platform/os
+	 INCS +=-I cloud/zyf_mqtt_ble_app/zyf_mqtt/platform/ssl
+	 INCS +=-I cloud/zyf_mqtt_ble_app/zyf_mqtt
+	 INCS +=-I cloud/zyf_mqtt_ble_app/zyf_ble
+	 INCS +=-I cloud/zyf_mqtt_ble_app/zyf_config
+	 INCS +=-I cloud/zyf_mqtt_ble_app/zyf_custom
+	 INCS +=-I cloud/zyf_mqtt_ble_app/zyf_protocol
+	 
+	 SRC_DIRS +=cloud\zyf_mqtt_ble_app\zyf_mqtt\auth
+	 SRC_DIRS +=cloud\zyf_mqtt_ble_app\zyf_mqtt\mqtt
+	 SRC_DIRS +=cloud\zyf_mqtt_ble_app\zyf_mqtt\mqtt\MQTTPacket
+	 SRC_DIRS +=cloud\zyf_mqtt_ble_app\zyf_mqtt\system
+	 SRC_DIRS +=cloud\zyf_mqtt_ble_app\zyf_mqtt\utility
+	 SRC_DIRS +=cloud\zyf_mqtt_ble_app\zyf_mqtt\platform
+	 SRC_DIRS +=cloud\zyf_mqtt_ble_app\zyf_mqtt\platform\network
+	 SRC_DIRS +=cloud\zyf_mqtt_ble_app\zyf_mqtt\platform\os
+	 SRC_DIRS +=cloud\zyf_mqtt_ble_app\zyf_mqtt\platform\ssl
+	 SRC_DIRS +=cloud\zyf_mqtt_ble_app\zyf_mqtt
+	 SRC_DIRS +=cloud\zyf_mqtt_ble_app\zyf_ble
+	 SRC_DIRS +=cloud\zyf_mqtt_ble_app\zyf_config
+	 SRC_DIRS +=cloud\zyf_mqtt_ble_app\zyf_custom
+	 SRC_DIRS +=cloud\zyf_mqtt_ble_app\zyf_protocol
+	 
+	 
+	 SRC_CLOUD =$(wildcard cloud/zyf_mqtt_ble_app/zyf_mqtt/auth/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_ble_app/zyf_mqtt/mqtt/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_ble_app/zyf_mqtt/mqtt/MQTTPacket/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_ble_app/zyf_mqtt/system/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_ble_app/zyf_mqtt/utility/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_ble_app/zyf_mqtt/platform/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_ble_app/zyf_mqtt/platform/network/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_ble_app/zyf_mqtt/platform/os/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_ble_app/zyf_mqtt/platform/ssl/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_ble_app/zyf_mqtt/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_ble_app/zyf_ble/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_ble_app/zyf_config/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_ble_app/zyf_custom/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_ble_app/zyf_protocol/*.c)
+	
+	 OBJS +=$(patsubst %.c, $(OBJ_DIR)/%.o, $(SRC_CLOUD))
+	 C_PREDEF +=-D __$(CLOUD_SOLUTION)__
+
+else ifeq ($(strip $(CLOUD_SOLUTION)),ZYF_MQTT_CGQ_SOLUTION)
+
+	 INCS +=-I cloud/zyf_mqtt_cgq_app/zyf_mqtt/auth
+	 INCS +=-I cloud/zyf_mqtt_cgq_app/zyf_mqtt/mqtt
+	 INCS +=-I cloud/zyf_mqtt_cgq_app/zyf_mqtt/mqtt/MQTTPacket
+	 INCS +=-I cloud/zyf_mqtt_cgq_app/zyf_mqtt/system
+	 INCS +=-I cloud/zyf_mqtt_cgq_app/zyf_mqtt/utility
+	 INCS +=-I cloud/zyf_mqtt_cgq_app/zyf_mqtt/platform
+	 INCS +=-I cloud/zyf_mqtt_cgq_app/zyf_mqtt/platform/network
+	 INCS +=-I cloud/zyf_mqtt_cgq_app/zyf_mqtt/platform/os
+	 INCS +=-I cloud/zyf_mqtt_cgq_app/zyf_mqtt/platform/ssl
+	 INCS +=-I cloud/zyf_mqtt_cgq_app/zyf_mqtt
+	 INCS +=-I cloud/zyf_mqtt_cgq_app/zyf_ble
+	 INCS +=-I cloud/zyf_mqtt_cgq_app/zyf_config
+	 INCS +=-I cloud/zyf_mqtt_cgq_app/zyf_custom
+	 INCS +=-I cloud/zyf_mqtt_cgq_app/zyf_protocol
+	 
+	 SRC_DIRS +=cloud\zyf_mqtt_cgq_app\zyf_mqtt\auth
+	 SRC_DIRS +=cloud\zyf_mqtt_cgq_app\zyf_mqtt\mqtt
+	 SRC_DIRS +=cloud\zyf_mqtt_cgq_app\zyf_mqtt\mqtt\MQTTPacket
+	 SRC_DIRS +=cloud\zyf_mqtt_cgq_app\zyf_mqtt\system
+	 SRC_DIRS +=cloud\zyf_mqtt_cgq_app\zyf_mqtt\utility
+	 SRC_DIRS +=cloud\zyf_mqtt_cgq_app\zyf_mqtt\platform
+	 SRC_DIRS +=cloud\zyf_mqtt_cgq_app\zyf_mqtt\platform\network
+	 SRC_DIRS +=cloud\zyf_mqtt_cgq_app\zyf_mqtt\platform\os
+	 SRC_DIRS +=cloud\zyf_mqtt_cgq_app\zyf_mqtt\platform\ssl
+	 SRC_DIRS +=cloud\zyf_mqtt_cgq_app\zyf_mqtt
+	 SRC_DIRS +=cloud\zyf_mqtt_cgq_app\zyf_ble
+	 SRC_DIRS +=cloud\zyf_mqtt_cgq_app\zyf_config
+	 SRC_DIRS +=cloud\zyf_mqtt_cgq_app\zyf_custom
+	 SRC_DIRS +=cloud\zyf_mqtt_cgq_app\zyf_protocol
+	 
+	 
+	 SRC_CLOUD =$(wildcard cloud/zyf_mqtt_cgq_app/zyf_mqtt/auth/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_cgq_app/zyf_mqtt/mqtt/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_cgq_app/zyf_mqtt/mqtt/MQTTPacket/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_cgq_app/zyf_mqtt/system/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_cgq_app/zyf_mqtt/utility/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_cgq_app/zyf_mqtt/platform/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_cgq_app/zyf_mqtt/platform/network/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_cgq_app/zyf_mqtt/platform/os/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_cgq_app/zyf_mqtt/platform/ssl/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_cgq_app/zyf_mqtt/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_cgq_app/zyf_ble/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_cgq_app/zyf_config/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_cgq_app/zyf_custom/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_cgq_app/zyf_protocol/*.c)
+	
+	 OBJS +=$(patsubst %.c, $(OBJ_DIR)/%.o, $(SRC_CLOUD))
+	 C_PREDEF +=-D __$(CLOUD_SOLUTION)__
+
+else ifeq ($(strip $(CLOUD_SOLUTION)),ZYF_MQTT_QXZ_SOLUTION)
+
+	 INCS +=-I cloud/zyf_mqtt_qxz_app/zyf_mqtt/auth
+	 INCS +=-I cloud/zyf_mqtt_qxz_app/zyf_mqtt/mqtt
+	 INCS +=-I cloud/zyf_mqtt_qxz_app/zyf_mqtt/mqtt/MQTTPacket
+	 INCS +=-I cloud/zyf_mqtt_qxz_app/zyf_mqtt/system
+	 INCS +=-I cloud/zyf_mqtt_qxz_app/zyf_mqtt/utility
+	 INCS +=-I cloud/zyf_mqtt_qxz_app/zyf_mqtt/platform
+	 INCS +=-I cloud/zyf_mqtt_qxz_app/zyf_mqtt/platform/network
+	 INCS +=-I cloud/zyf_mqtt_qxz_app/zyf_mqtt/platform/os
+	 INCS +=-I cloud/zyf_mqtt_qxz_app/zyf_mqtt/platform/ssl
+	 INCS +=-I cloud/zyf_mqtt_qxz_app/zyf_mqtt
+	 INCS +=-I cloud/zyf_mqtt_qxz_app/zyf_ble
+	 INCS +=-I cloud/zyf_mqtt_qxz_app/zyf_config
+	 INCS +=-I cloud/zyf_mqtt_qxz_app/zyf_custom
+	 INCS +=-I cloud/zyf_mqtt_qxz_app/zyf_protocol
+	 
+	 SRC_DIRS +=cloud\zyf_mqtt_qxz_app\zyf_mqtt\auth
+	 SRC_DIRS +=cloud\zyf_mqtt_qxz_app\zyf_mqtt\mqtt
+	 SRC_DIRS +=cloud\zyf_mqtt_qxz_app\zyf_mqtt\mqtt\MQTTPacket
+	 SRC_DIRS +=cloud\zyf_mqtt_qxz_app\zyf_mqtt\system
+	 SRC_DIRS +=cloud\zyf_mqtt_qxz_app\zyf_mqtt\utility
+	 SRC_DIRS +=cloud\zyf_mqtt_qxz_app\zyf_mqtt\platform
+	 SRC_DIRS +=cloud\zyf_mqtt_qxz_app\zyf_mqtt\platform\network
+	 SRC_DIRS +=cloud\zyf_mqtt_qxz_app\zyf_mqtt\platform\os
+	 SRC_DIRS +=cloud\zyf_mqtt_qxz_app\zyf_mqtt\platform\ssl
+	 SRC_DIRS +=cloud\zyf_mqtt_qxz_app\zyf_mqtt
+	 SRC_DIRS +=cloud\zyf_mqtt_qxz_app\zyf_ble
+	 SRC_DIRS +=cloud\zyf_mqtt_qxz_app\zyf_config
+	 SRC_DIRS +=cloud\zyf_mqtt_qxz_app\zyf_custom
+	 SRC_DIRS +=cloud\zyf_mqtt_qxz_app\zyf_protocol
+	 
+	 
+	 SRC_CLOUD =$(wildcard cloud/zyf_mqtt_qxz_app/zyf_mqtt/auth/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_qxz_app/zyf_mqtt/mqtt/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_qxz_app/zyf_mqtt/mqtt/MQTTPacket/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_qxz_app/zyf_mqtt/system/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_qxz_app/zyf_mqtt/utility/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_qxz_app/zyf_mqtt/platform/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_qxz_app/zyf_mqtt/platform/network/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_qxz_app/zyf_mqtt/platform/os/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_qxz_app/zyf_mqtt/platform/ssl/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_qxz_app/zyf_mqtt/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_qxz_app/zyf_ble/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_qxz_app/zyf_config/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_qxz_app/zyf_custom/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_qxz_app/zyf_protocol/*.c)
+	
+	 OBJS +=$(patsubst %.c, $(OBJ_DIR)/%.o, $(SRC_CLOUD))
+	 C_PREDEF +=-D __$(CLOUD_SOLUTION)__
+
+else ifeq ($(strip $(CLOUD_SOLUTION)),PAHO_MQTT_SOLUTION)
+
+	 INCS +=-I cloud/paho_mqtt/MQTTPacket/src
+	 INCS +=-I cloud/paho_mqtt/MQTTPacket
+	 INCS +=-I cloud/paho_mqtt/user_custom
+	 SRC_DIRS +=cloud\paho_mqtt\MQTTPacket
+	 SRC_DIRS +=cloud\paho_mqtt\user_custom
+	 SRC_DIRS +=cloud\paho_mqtt\MQTTPacket\src
+	 SRC_CLOUD =$(wildcard cloud/paho_mqtt/MQTTPacket/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/paho_mqtt/MQTTPacket/src/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/paho_mqtt/user_custom/*.c)
+	 OBJS +=$(patsubst %.c, $(OBJ_DIR)/%.o, $(SRC_CLOUD))
+	 C_PREDEF +=-D __$(CLOUD_SOLUTION)__
+	 
+else ifeq ($(strip $(CLOUD_SOLUTION)),MY_ZYF_SOLUTION)
+     INCS +=-I cloud/my_zyf_test_app/zyf_config
+	 INCS +=-I cloud/my_zyf_test_app/zyf_custom
+	 INCS +=-I cloud/my_zyf_test_app/zyf_protocol
+	 SRC_DIRS +=cloud\my_zyf_test_app\zyf_config
+	 SRC_DIRS +=cloud\my_zyf_test_app\zyf_custom
+	 SRC_DIRS +=cloud\my_zyf_test_app\zyf_protocol
+	 SRC_CLOUD =$(wildcard cloud/my_zyf_test_app/zyf_config/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/my_zyf_test_app/zyf_custom/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/my_zyf_test_app/zyf_protocol/*.c)
+	 OBJS +=$(patsubst %.c, $(OBJ_DIR)/%.o, $(SRC_CLOUD))
+	 C_PREDEF +=-D __$(CLOUD_SOLUTION)__
+	 
+else ifeq ($(strip $(CLOUD_SOLUTION)),ZYF_JT_SOLUTION)
+     INCS +=-I cloud/zyf_app_tjd/zyf_config
+	 INCS +=-I cloud/zyf_app_tjd/zyf_custom
+	 INCS +=-I cloud/zyf_app_tjd/zyf_protocol
+	 SRC_DIRS +=cloud\zyf_app_tjd\zyf_config
+	 SRC_DIRS +=cloud\zyf_app_tjd\zyf_custom
+	 SRC_DIRS +=cloud\zyf_app_tjd\zyf_protocol
+	 SRC_CLOUD =$(wildcard cloud/zyf_app_tjd/zyf_config/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_app_tjd/zyf_custom/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_app_tjd/zyf_protocol/*.c)
+	 OBJS +=$(patsubst %.c, $(OBJ_DIR)/%.o, $(SRC_CLOUD))
+	 C_PREDEF +=-D __$(CLOUD_SOLUTION)__
+
+else ifeq ($(strip $(CLOUD_SOLUTION)),ZYF_CZ_MQTT_SOLUTION)
+
+	 INCS +=-I cloud/zyf_mqtt_cz_app/zyf_mqtt/auth
+	 INCS +=-I cloud/zyf_mqtt_cz_app/zyf_mqtt/mqtt
+	 INCS +=-I cloud/zyf_mqtt_cz_app/zyf_mqtt/mqtt/MQTTPacket
+	 INCS +=-I cloud/zyf_mqtt_cz_app/zyf_mqtt/system
+	 INCS +=-I cloud/zyf_mqtt_cz_app/zyf_mqtt/utility
+	 INCS +=-I cloud/zyf_mqtt_cz_app/zyf_mqtt/platform
+	 INCS +=-I cloud/zyf_mqtt_cz_app/zyf_mqtt/platform/network
+	 INCS +=-I cloud/zyf_mqtt_cz_app/zyf_mqtt/platform/os
+	 INCS +=-I cloud/zyf_mqtt_cz_app/zyf_mqtt/platform/ssl
+	 INCS +=-I cloud/zyf_mqtt_cz_app/zyf_mqtt
+	 INCS +=-I cloud/zyf_mqtt_cz_app/zyf_ble
+	 INCS +=-I cloud/zyf_mqtt_cz_app/zyf_config
+	 INCS +=-I cloud/zyf_mqtt_cz_app/zyf_custom
+	 INCS +=-I cloud/zyf_mqtt_cz_app/zyf_protocol
+	 
+	 SRC_DIRS +=cloud\zyf_mqtt_cz_app\zyf_mqtt\auth
+	 SRC_DIRS +=cloud\zyf_mqtt_cz_app\zyf_mqtt\mqtt
+	 SRC_DIRS +=cloud\zyf_mqtt_cz_app\zyf_mqtt\mqtt\MQTTPacket
+	 SRC_DIRS +=cloud\zyf_mqtt_cz_app\zyf_mqtt\system
+	 SRC_DIRS +=cloud\zyf_mqtt_cz_app\zyf_mqtt\utility
+	 SRC_DIRS +=cloud\zyf_mqtt_cz_app\zyf_mqtt\platform
+	 SRC_DIRS +=cloud\zyf_mqtt_cz_app\zyf_mqtt\platform\network
+	 SRC_DIRS +=cloud\zyf_mqtt_cz_app\zyf_mqtt\platform\os
+	 SRC_DIRS +=cloud\zyf_mqtt_cz_app\zyf_mqtt\platform\ssl
+	 SRC_DIRS +=cloud\zyf_mqtt_cz_app\zyf_mqtt
+	 SRC_DIRS +=cloud\zyf_mqtt_cz_app\zyf_ble
+	 SRC_DIRS +=cloud\zyf_mqtt_cz_app\zyf_config
+	 SRC_DIRS +=cloud\zyf_mqtt_cz_app\zyf_custom
+	 SRC_DIRS +=cloud\zyf_mqtt_cz_app\zyf_protocol
+	 
+	 
+	 SRC_CLOUD =$(wildcard cloud/zyf_mqtt_cz_app/zyf_mqtt/auth/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_cz_app/zyf_mqtt/mqtt/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_cz_app/zyf_mqtt/mqtt/MQTTPacket/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_cz_app/zyf_mqtt/system/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_cz_app/zyf_mqtt/utility/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_cz_app/zyf_mqtt/platform/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_cz_app/zyf_mqtt/platform/network/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_cz_app/zyf_mqtt/platform/os/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_cz_app/zyf_mqtt/platform/ssl/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_cz_app/zyf_mqtt/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_cz_app/zyf_ble/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_cz_app/zyf_config/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_cz_app/zyf_custom/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_cz_app/zyf_protocol/*.c)
+	
+	 OBJS +=$(patsubst %.c, $(OBJ_DIR)/%.o, $(SRC_CLOUD))
+	 C_PREDEF +=-D __$(CLOUD_SOLUTION)__
+
+else ifeq ($(strip $(CLOUD_SOLUTION)),ZYF_TRACKER_MQTT_SOLUTION)
+
+	 INCS +=-I cloud/zyf_mqtt_new_tracker_app/zyf_mqtt/dev_sign
+	 INCS +=-I cloud/zyf_mqtt_new_tracker_app/zyf_mqtt/infra
+	 INCS +=-I cloud/zyf_mqtt_new_tracker_app/zyf_mqtt/mqtt
+	 INCS +=-I cloud/zyf_mqtt_new_tracker_app/zyf_mqtt/wrappers
+	 INCS +=-I cloud/zyf_mqtt_new_tracker_app/zyf_mqtt
+	 INCS +=-I cloud/zyf_mqtt_new_tracker_app/zyf_ble
+	 INCS +=-I cloud/zyf_mqtt_new_tracker_app/zyf_config
+	 INCS +=-I cloud/zyf_mqtt_new_tracker_app/zyf_custom
+	 INCS +=-I cloud/zyf_mqtt_new_tracker_app/zyf_protocol
+	 
+	 SRC_DIRS +=cloud\zyf_mqtt_new_tracker_app\zyf_mqtt\dev_sign
+	 SRC_DIRS +=cloud\zyf_mqtt_new_tracker_app\zyf_mqtt\infra
+	 SRC_DIRS +=cloud\zyf_mqtt_new_tracker_app\zyf_mqtt\mqtt
+	 SRC_DIRS +=cloud\zyf_mqtt_new_tracker_app\zyf_mqtt\wrappers
+	 SRC_DIRS +=cloud\zyf_mqtt_new_tracker_app\zyf_mqtt
+	 SRC_DIRS +=cloud\zyf_mqtt_new_tracker_app\zyf_ble
+	 SRC_DIRS +=cloud\zyf_mqtt_new_tracker_app\zyf_config
+	 SRC_DIRS +=cloud\zyf_mqtt_new_tracker_app\zyf_custom
+	 SRC_DIRS +=cloud\zyf_mqtt_new_tracker_app\zyf_protocol
+	 
+	 
+	 SRC_CLOUD =$(wildcard cloud/zyf_mqtt_new_tracker_app/zyf_mqtt/dev_sign/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_new_tracker_app/zyf_mqtt/mqtt/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_new_tracker_app/zyf_mqtt/infra/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_new_tracker_app/zyf_mqtt/wrappers/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_new_tracker_app/zyf_mqtt/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_new_tracker_app/zyf_ble/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_new_tracker_app/zyf_config/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_new_tracker_app/zyf_custom/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_new_tracker_app/zyf_protocol/*.c)
+
+	 OBJS +=$(patsubst %.c, $(OBJ_DIR)/%.o, $(SRC_CLOUD))
+	 C_PREDEF +=-D __$(CLOUD_SOLUTION)__
+
+else ifeq ($(strip $(CLOUD_SOLUTION)),ZYF_MQTT_PEDOMETER_SOLUTION)
+
+	 INCS +=-I cloud/zyf_mqtt_jbq_adc_app/zyf_mqtt/auth
+	 INCS +=-I cloud/zyf_mqtt_jbq_adc_app/zyf_mqtt/mqtt
+	 INCS +=-I cloud/zyf_mqtt_jbq_adc_app/zyf_mqtt/mqtt/MQTTPacket
+	 INCS +=-I cloud/zyf_mqtt_jbq_adc_app/zyf_mqtt/system
+	 INCS +=-I cloud/zyf_mqtt_jbq_adc_app/zyf_mqtt/utility
+	 INCS +=-I cloud/zyf_mqtt_jbq_adc_app/zyf_mqtt/platform
+	 INCS +=-I cloud/zyf_mqtt_jbq_adc_app/zyf_mqtt/platform/network
+	 INCS +=-I cloud/zyf_mqtt_jbq_adc_app/zyf_mqtt/platform/os
+	 INCS +=-I cloud/zyf_mqtt_jbq_adc_app/zyf_mqtt/platform/ssl
+	 INCS +=-I cloud/zyf_mqtt_jbq_adc_app/zyf_mqtt
+	 INCS +=-I cloud/zyf_mqtt_jbq_adc_app/zyf_ble
+	 INCS +=-I cloud/zyf_mqtt_jbq_adc_app/zyf_config
+	 INCS +=-I cloud/zyf_mqtt_jbq_adc_app/zyf_custom
+	 INCS +=-I cloud/zyf_mqtt_jbq_adc_app/zyf_protocol
+
+	 SRC_DIRS +=cloud\zyf_mqtt_jbq_adc_app\zyf_mqtt\auth
+	 SRC_DIRS +=cloud\zyf_mqtt_jbq_adc_app\zyf_mqtt\mqtt
+	 SRC_DIRS +=cloud\zyf_mqtt_jbq_adc_app\zyf_mqtt\mqtt\MQTTPacket
+	 SRC_DIRS +=cloud\zyf_mqtt_jbq_adc_app\zyf_mqtt\system
+	 SRC_DIRS +=cloud\zyf_mqtt_jbq_adc_app\zyf_mqtt\utility
+	 SRC_DIRS +=cloud\zyf_mqtt_jbq_adc_app\zyf_mqtt\platform
+	 SRC_DIRS +=cloud\zyf_mqtt_jbq_adc_app\zyf_mqtt\platform\network
+	 SRC_DIRS +=cloud\zyf_mqtt_jbq_adc_app\zyf_mqtt\platform\os
+	 SRC_DIRS +=cloud\zyf_mqtt_jbq_adc_app\zyf_mqtt\platform\ssl
+	 SRC_DIRS +=cloud\zyf_mqtt_jbq_adc_app\zyf_mqtt
+	 SRC_DIRS +=cloud\zyf_mqtt_jbq_adc_app\zyf_ble
+	 SRC_DIRS +=cloud\zyf_mqtt_jbq_adc_app\zyf_config
+	 SRC_DIRS +=cloud\zyf_mqtt_jbq_adc_app\zyf_custom
+	 SRC_DIRS +=cloud\zyf_mqtt_jbq_adc_app\zyf_protocol
+
+
+	 SRC_CLOUD =$(wildcard cloud/zyf_mqtt_jbq_adc_app/zyf_mqtt/auth/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_jbq_adc_app/zyf_mqtt/mqtt/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_jbq_adc_app/zyf_mqtt/mqtt/MQTTPacket/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_jbq_adc_app/zyf_mqtt/system/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_jbq_adc_app/zyf_mqtt/utility/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_jbq_adc_app/zyf_mqtt/platform/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_jbq_adc_app/zyf_mqtt/platform/network/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_jbq_adc_app/zyf_mqtt/platform/os/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_jbq_adc_app/zyf_mqtt/platform/ssl/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_jbq_adc_app/zyf_mqtt/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_jbq_adc_app/zyf_ble/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_jbq_adc_app/zyf_config/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_jbq_adc_app/zyf_custom/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_mqtt_jbq_adc_app/zyf_protocol/*.c)
+
+	 OBJS +=$(patsubst %.c, $(OBJ_DIR)/%.o, $(SRC_CLOUD))
+	 C_PREDEF +=-D __$(CLOUD_SOLUTION)__
+
+else
+     #other solutions to append
+endif
+#-------------------------------------------------------------------------------
+# Configure user reference library
+#-------------------------------------------------------------------------------
+USERLIB=libs/gcc/app_start.lib
+
+.PHONY: all
+all:
+#	$(warning <-- make all, C_PREDEF=$(C_PREDEF) -->)
+	@$(MAKE) new -f make/gcc/gcc_makefile
+
+include make\gcc\gcc_makefiledef
+
+export GCC_INSTALL_PATH C_PREDEF OBJS USERLIB SRC_DIRS

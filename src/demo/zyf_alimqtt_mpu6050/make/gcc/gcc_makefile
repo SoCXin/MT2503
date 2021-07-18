@@ -1,0 +1,135 @@
+##==========================================================================
+ #                   Quectel OpenCPU
+ #
+ #              Copyright(c) 2012-2013 Quectel Ltd. All rights reserved.
+ #
+ #--------------------------------------------------------------------------
+ # File Description
+ # ----------------
+ #      OpenCPU makefile for GCC.
+ #
+ #--------------------------------------------------------------------------
+ #==========================================================================
+
+#-------------------------------------------------------------------------------
+# Configure GCC installation path, and GCC version.
+# To execute "arm-none-eabi-gcc -v" in command line can get the current gcc version 
+#-------------------------------------------------------------------------------
+GCC_INSTALL_PATH=D:\yyw-work\203CS\ARMPath
+GCC_VERSION=4.6.1
+
+
+#-------------------------------------------------------------------------------
+#use the following path for 32-bit operating system
+#-------------------------------------------------------------------------------
+#GCC_INSTALL_PATH=C:\Program Files\CodeSourcery\Sourcery_CodeBench_Lite_for_ARM_EABI 
+
+C_PREDEF=-D __ZYF_MPU6050_MQTT_APP__
+#-------------------------------------------------------------------------------
+# Configure the Cloud Solution
+#-------------------------------------------------------------------------------
+CLOUD_SOLUTION=ZYF_MPU6050_MQTT_SOLUTION
+
+
+#-------------------------------------------------------------------------------
+# Configure version and out target
+#-------------------------------------------------------------------------------
+PLATFORM = APPGS3MD
+MEMORY   = M32
+VERSION  = A01
+TARGET   = $(strip $(PLATFORM))$(strip $(MEMORY))$(strip $(VERSION))
+
+#-------------------------------------------------------------------------------
+# Configure the include directories
+#-------------------------------------------------------------------------------
+INCS =  -I $(ENV_INC) 
+INCS += -I ./           \
+        -I include      \
+        -I ril/inc      \
+        -I custom/config   \
+        -I custom/fota/inc \
+
+		
+
+
+
+#-------------------------------------------------------------------------------
+# Configure source code dirctories
+#-------------------------------------------------------------------------------
+SRC_DIRS=example    \
+		 custom     \
+		 custom\config     \
+         custom\fota\src   \
+		 ril\src    \
+
+
+
+#-------------------------------------------------------------------------------
+# Configure source code files to compile in the source code directories
+#-------------------------------------------------------------------------------
+SRC_SYS=$(wildcard custom/config/*.c)
+SRC_SYS_RIL=$(wildcard ril/src/*.c)
+SRC_EXAMPLE=$(wildcard example/*.c)
+SRC_CUS=$(wildcard custom/*.c)
+SRC_FOTA=$(wildcard custom/fota/src/*.c)
+
+
+OBJS=\
+	 $(patsubst %.c, $(OBJ_DIR)/%.o, $(SRC_SYS))        \
+	 $(patsubst %.c, $(OBJ_DIR)/%.o, $(SRC_SYS_RIL))    \
+	 $(patsubst %.c, $(OBJ_DIR)/%.o, $(SRC_EXAMPLE))    \
+	 $(patsubst %.c, $(OBJ_DIR)/%.o, $(SRC_CUS))        \
+	 $(patsubst %.c, $(OBJ_DIR)/%.o, $(SRC_FOTA))      \
+
+ifeq ($(strip $(CLOUD_SOLUTION)),ZYF_MPU6050_MQTT_SOLUTION)
+
+	 INCS +=-I cloud/zyf_alimqtt_mpu6050_app/zyf_mqtt/dev_sign
+	 INCS +=-I cloud/zyf_alimqtt_mpu6050_app/zyf_mqtt/infra
+	 INCS +=-I cloud/zyf_alimqtt_mpu6050_app/zyf_mqtt/mqtt
+	 INCS +=-I cloud/zyf_alimqtt_mpu6050_app/zyf_mqtt/wrappers
+	 INCS +=-I cloud/zyf_alimqtt_mpu6050_app/zyf_mqtt
+	 INCS +=-I cloud/zyf_alimqtt_mpu6050_app/zyf_ble
+	 INCS +=-I cloud/zyf_alimqtt_mpu6050_app/zyf_config
+	 INCS +=-I cloud/zyf_alimqtt_mpu6050_app/zyf_custom
+	 INCS +=-I cloud/zyf_alimqtt_mpu6050_app/zyf_protocol
+	 
+	 SRC_DIRS +=cloud\zyf_alimqtt_mpu6050_app\zyf_mqtt\dev_sign
+	 SRC_DIRS +=cloud\zyf_alimqtt_mpu6050_app\zyf_mqtt\infra
+	 SRC_DIRS +=cloud\zyf_alimqtt_mpu6050_app\zyf_mqtt\mqtt
+	 SRC_DIRS +=cloud\zyf_alimqtt_mpu6050_app\zyf_mqtt\wrappers
+	 SRC_DIRS +=cloud\zyf_alimqtt_mpu6050_app\zyf_mqtt
+	 SRC_DIRS +=cloud\zyf_alimqtt_mpu6050_app\zyf_ble
+	 SRC_DIRS +=cloud\zyf_alimqtt_mpu6050_app\zyf_config
+	 SRC_DIRS +=cloud\zyf_alimqtt_mpu6050_app\zyf_custom
+	 SRC_DIRS +=cloud\zyf_alimqtt_mpu6050_app\zyf_protocol
+	 
+	 
+	 SRC_CLOUD =$(wildcard cloud/zyf_alimqtt_mpu6050_app/zyf_mqtt/dev_sign/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_alimqtt_mpu6050_app/zyf_mqtt/mqtt/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_alimqtt_mpu6050_app/zyf_mqtt/infra/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_alimqtt_mpu6050_app/zyf_mqtt/wrappers/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_alimqtt_mpu6050_app/zyf_mqtt/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_alimqtt_mpu6050_app/zyf_ble/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_alimqtt_mpu6050_app/zyf_config/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_alimqtt_mpu6050_app/zyf_custom/*.c)
+	 SRC_CLOUD +=$(wildcard cloud/zyf_alimqtt_mpu6050_app/zyf_protocol/*.c)
+
+	 OBJS +=$(patsubst %.c, $(OBJ_DIR)/%.o, $(SRC_CLOUD))
+	 C_PREDEF +=-D __$(CLOUD_SOLUTION)__
+
+else
+     #other solutions to append
+endif
+#-------------------------------------------------------------------------------
+# Configure user reference library
+#-------------------------------------------------------------------------------
+USERLIB=libs/gcc/app_start.lib
+
+.PHONY: all
+all:
+#	$(warning <-- make all, C_PREDEF=$(C_PREDEF) -->)
+	@$(MAKE) new -f make/gcc/gcc_makefile
+
+include make\gcc\gcc_makefiledef
+
+export GCC_INSTALL_PATH C_PREDEF OBJS USERLIB SRC_DIRS
