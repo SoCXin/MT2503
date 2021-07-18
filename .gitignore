@@ -15,7 +15,6 @@ CHANGE*
 README*
 COPY*
 *CONTRIBU*
-LICENSE*
 HACKING*
 *.swp
 *.lck
@@ -28,7 +27,6 @@ HACKING*
 *.hex
 *.bin
 *bak
-*.txt
 *.lst
 *.sct
 *.elf
@@ -52,8 +50,7 @@ doc
 *dox
 tests
 # mk
-*.md
+# *.md
 Doxyfile
-**/*/README*
 *.so
 *.dcm
