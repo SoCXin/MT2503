@@ -1,9 +1,0 @@
-_hisr: CODE, 443 0 8
-_main: CODE, 13 0 92
-_twi_master_send: CODE, 265 0 64
-_twi_master_recv: CODE, 105 0 83
-_misc_eer: CODE, 362 0 23
-_usart_send: CODE, 329 0 33
-_usart_init: CODE, 401 0 16
-_twi_init: CODE, 431 0 12
-Total: 331

@@ -1,8 +1,0 @@
-_spi_exch: CODE, 183 0 62
-_hisr: CODE, 373 0 8
-_main: CODE, 13 0 98
-_misc_eer: CODE, 288 0 23
-_usart_send: CODE, 253 0 35
-_spi_init_sla: CODE, 327 0 16
-_usart_init: CODE, 343 0 16
-Total: 258

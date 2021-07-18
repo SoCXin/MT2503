@@ -1,0 +1,31 @@
+{
+    "type":"SoC",
+    "name":"MT2503",
+    "title": "MediaTek MT2503 SoC",
+    "description":"MediaTek GSM/GNSS SoC",
+    "Core": {
+        "type":"ARM7",
+        "Freq":580,
+        "DMIPS": 1.55,
+        "CoreMark": 3.05
+    },
+    "manufacturer": {
+        "vendor":"MediaTek",
+        "homepage":"https://www.mediatek.com/"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/SoCXin/MT2503.git"
+    },
+    "version":"1.0.0",
+    "series":["MT2503","MT6261"],
+    "package":["QFN156","QFN120"],
+    "peripheral": ["ADC","UART","I2C","SPI","PWM"],
+    "keywords": [
+        "dev-platform",
+        "ARM",
+        "Cortex-M",
+        "ADC","DAC","SDIO","CAN","I2C","RTC","SPI",
+        "3.6V","1.8V"
+    ]
+}

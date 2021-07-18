@@ -1,7 +1,0 @@
-_hisr: CODE, 159 0 35
-_main: CODE, 13 0 110
-_misc_eer: CODE, 258 0 23
-_usart_send: CODE, 194 0 33
-_usart_init: CODE, 297 0 16
-_eccp1_cap_init: CODE, 227 0 31
-Total: 248

@@ -1,9 +1,0 @@
-_hisr: CODE, 165 0 8
-_usart_getc: CODE, 173 0 7
-_main: CODE, 49 0 34
-_usart_putc: CODE, 153 0 12
-_usart_puts: CODE, 112 0 26
-_misc_eer: CODE, 26 0 23
-_cfw_valid: CODE, 13 0 13
-_usart_init: CODE, 138 0 15
-Total: 138
